@@ -1,0 +1,15 @@
+## Interface: 16001
+## Title: PoisonFlow
+## Notes: Drag-and-drop poison configuration for both weapons.
+## Author: Simon Zwicker
+## Version: 0.1.0
+## SavedVariablesPerCharacter: PoisonFlowDB
+
+Core\Init.lua
+Core\Localization.lua
+Core\Database.lua
+
+Localization\enUS.lua
+Localization\deDE.lua
+
+UI\Settings.lua
