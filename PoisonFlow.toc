@@ -8,6 +8,7 @@
 Core\Init.lua
 Core\Localization.lua
 Core\Database.lua
+Core\Commands.lua
 
 Localization\enUS.lua
 Localization\deDE.lua
