@@ -8,9 +8,14 @@
 Core\Init.lua
 Core\Localization.lua
 Core\Database.lua
-Core\Commands.lua
 
 Localization\enUS.lua
 Localization\deDE.lua
 
+UI\WeaponSlot.lua
+UI\PoisonSlot.lua
+UI\Components\CheckBox.lua
+UI\Components\NumberInput.lua
 UI\Settings.lua
+
+Core\Commands.lua

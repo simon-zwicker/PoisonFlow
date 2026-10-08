@@ -1,4 +1,16 @@
 local PoisonFlow = _G.PoisonFlow
+
+-- =====================================================
+-- Types
+-- =====================================================
+
+---@class PoisonFlowLocalization
+---@field FallbackLocale string
+---@field ActiveLocale string
+---@field Locales table,string, table<string, string>>
+---@field Register fun(self: PoisonFlowLocalization, locale: string, translation: table)
+---@field Get fun(self: PoisonFlowLocalization): table
+
 local Localization = {}
 PoisonFlow.Localization = Localization
 

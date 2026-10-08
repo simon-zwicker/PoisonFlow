@@ -1,4 +1,10 @@
 local PoisonFlow = _G.PoisonFlow
+
+-- =====================================================
+-- Types
+-- =====================================================
+
+---@class PoisonFlowDatabase
 local Database = {}
 
 PoisonFlow.Database = Database
@@ -8,22 +14,20 @@ local DEFAULTS = {
     mainHand = {
         primary = nil,
         fallback = nil,
-        monitor = {
-            time = true,
-            charges = true,
-            timeThreshold = 120,
-            chargeThreshold = 5,
-        }
     },
     offHand = {
         primary = nil,
         fallback = nil,
-        monitor = {
-            time = true,
-            charges = true,
-            timeThreshold = 120,
-            chargeThreshold = 5,
-        }
+    },
+    alerts = {
+        time = {
+            enabled = true,
+            threshold = 120,
+        },
+        charges = {
+            enabled = true,
+            threshold = 5,
+        },
     },
 }
 

@@ -1,4 +1,23 @@
 local ADDON_NAME = ...
+
+-- =====================================================
+-- Types
+-- =====================================================
+
+---@class PoisonFlow
+---@field Name string
+---@field Version string
+---@field Localization PoisonFlowLocalization
+---@field Database PoisonFlowDatabase
+---@field Settings PoisonFlowSettings
+---@field WeaponSlot PoisonFlowWeaponSlot
+---@field PoisonSlot PoisonFlowPoisonSlot
+---@field Poison PoisonFlowPoison
+
+-- =====================================================
+-- Namespace
+-- =====================================================
+
 local PoisonFlow = {}
 
 _G.PoisonFlow = PoisonFlow
