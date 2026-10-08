@@ -23,6 +23,7 @@ local ADDON_NAME = ...
 ---@field PoisonStockMonitor PoisonFlowPoisonStockMonitor
 ---@field StockWarnings PoisonFlowStockWarnings
 ---@field MinimapButton PoisonFlowMinimapButton
+---@field Texture PoisonFlowTexture
 
 local PoisonFlow = {}
 

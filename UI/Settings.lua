@@ -1,5 +1,6 @@
 local PoisonFlow = _G.PoisonFlow
 local L11n = PoisonFlow.Localization:Get()
+local Texture = PoisonFlow.Texture
 
 -- =====================================================
 -- Types
@@ -31,19 +32,6 @@ local function CreateSettingsFrame()
     frame:SetMovable(true)
     frame:EnableMouse(true)
     frame:RegisterForDrag("LeftButton")
-    frame:SetBackdrop({
-        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-        tile = true,
-        tileSize = 32,
-        edgeSize = 32,
-        insets = {
-            left = 8,
-            right = 8,
-            top = 8,
-            bottom = 8,
-        }
-    })
     frame:SetScript(
         "OnDragStart",
         function(self)
@@ -56,6 +44,15 @@ local function CreateSettingsFrame()
             self:StopMovingOrSizing()
         end
     )
+
+    local background = frame:CreateTexture(nil, "BACKGROUND")
+    background:SetTexture(Texture.Window.Background)
+    background:SetPoint("TOPLEFT", frame, "TOPLEFT", 12, -12)
+    background:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -12, 12)
+
+    local windowFrame = frame:CreateTexture(nil, "BORDER")
+    windowFrame:SetTexture(Texture.Window.Frame)
+    windowFrame:SetAllPoints(frame)
 
     local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint("TOP", frame, "TOP", 0, -20)

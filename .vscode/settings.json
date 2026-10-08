@@ -19,7 +19,9 @@
         "SlashCmdList",
         "OFF",
         "CreateFontStringPool",
-        "UPDATE"
+        "UPDATE",
+        "Background",
+        "Add"
     ],
     "Lua.diagnostics.disable": [
         "assign-type-mismatch"

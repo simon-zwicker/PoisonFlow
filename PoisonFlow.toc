@@ -20,6 +20,8 @@ Core\PoisonMonitor.lua
 Localization\enUS.lua
 Localization\deDE.lua
 
+UI\Theme\Texture.lua
+
 UI\WeaponSlot.lua
 UI\PoisonSlot.lua
 UI\Components\CheckBox.lua
