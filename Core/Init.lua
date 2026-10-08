@@ -9,16 +9,14 @@ local ADDON_NAME = ...
 ---@field Version string
 ---@field Localization PoisonFlowLocalization
 ---@field Database PoisonFlowDatabase
+---@field Poison PoisonFlowPoison
+---@field WeaponEnchantService PoisonFlowWeaponEnchantService
 ---@field Settings PoisonFlowSettings
 ---@field WeaponSlot PoisonFlowWeaponSlot
 ---@field PoisonSlot PoisonFlowPoisonSlot
----@field Poison PoisonFlowPoison
 ---@field CheckBox PoisonFlowCheckBox
 ---@field NumberInput PoisonFlowNumberInput
-
--- =====================================================
--- Namespace
--- =====================================================
+---@field PoisonMonitor PoisonFlowPoisonMonitor
 
 local PoisonFlow = {}
 
@@ -40,6 +38,7 @@ eventFrame:SetScript(
         end
 
         PoisonFlow.Database:Initialize()
+        PoisonFlow.PoisonMonitor:Initialize()
         local L11n = PoisonFlow.Localization:Get()
         
         print("|cff00cc66PoisonFlow|r " .. L11n.LOADED)

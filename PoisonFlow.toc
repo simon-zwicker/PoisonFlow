@@ -7,8 +7,12 @@
 
 Core\Init.lua
 Core\Localization.lua
+
 Data\Database.lua
 Data\Poison.lua
+
+Core\WeaponEnchantService.lua
+Core\PoisonMonitor.lua
 
 Localization\enUS.lua
 Localization\deDE.lua

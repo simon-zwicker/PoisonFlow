@@ -19,5 +19,7 @@ Localization:Register(
         ALERT_TIME_UNIT = "Minuten",
         ALERT_CHARGES = "Warnung bei auslaufender Aufladungen",
         ALERT_CHARGES_UNIT = "Aufladungen",
+        ALERT_POISON = "Warnung bei niedrigem Hauptgiftbestand",
+        ALERT_POISON_UNIT = "Stück",
     }
 )

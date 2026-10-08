@@ -16,7 +16,7 @@ PoisonFlow.Settings = Settings
 -- =========================================================
 
 local FRAME_WIDTH = 600
-local FRAME_HEIGHT = 620
+local FRAME_HEIGHT = 640
 local COLUMN_OFFSET = 145
 
 -- =========================================================
@@ -58,7 +58,7 @@ local function CreateSettingsFrame()
     )
 
     local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    title:SetPoint("TOP", frame, "TOP", 0, -10)
+    title:SetPoint("TOP", frame, "TOP", 0, -20)
     title:SetText(PoisonFlow.Name)
 
     local closeButton = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
@@ -69,7 +69,7 @@ local function CreateSettingsFrame()
     -- =========================================================
 
     local mainHandTitle = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    mainHandTitle:SetPoint("TOP", frame, "TOP", -COLUMN_OFFSET, -80)
+    mainHandTitle:SetPoint("TOP", frame, "TOP", -COLUMN_OFFSET, -60)
     mainHandTitle:SetText(L11n.MAIN_HAND)
 
     local mainHandWeapon = PoisonFlow.WeaponSlot:Create(frame, "mainHand")
@@ -86,7 +86,7 @@ local function CreateSettingsFrame()
     -- =========================================================
 
     local offHandTitle = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    offHandTitle:SetPoint("TOP", frame, "TOP", COLUMN_OFFSET, -80)
+    offHandTitle:SetPoint("TOP", frame, "TOP", COLUMN_OFFSET, -60)
     offHandTitle:SetText(L11n.OFF_HAND)
 
     local offHandWeapon = PoisonFlow.WeaponSlot:Create(frame, "offHand")
@@ -164,6 +164,31 @@ local function CreateSettingsFrame()
     local chargeUnit = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     chargeUnit:SetPoint("LEFT", chargeInput.Frame, "RIGHT", 8,0)
     chargeUnit:SetText(L11n.ALERT_CHARGES_UNIT)
+
+    local poisonStockCheckBox = PoisonFlow.CheckBox:Create(
+        frame,
+        L11n.ALERT_POISON,
+        db.alerts.stock.enabled,
+        function(checked)
+            db.alerts.stock.enabled = checked
+        end
+    )
+    poisonStockCheckBox.Frame:SetPoint("TOPLEFT", chargeCheckBox.Frame, "BOTTOMLEFT", 0, -10)
+
+    local poisonStockInput = PoisonFlow.NumberInput:Create(
+        frame,
+        db.alerts.stock.threshold,
+        1,
+        100,
+        function(value)
+            db.alerts.stock.threshold = value
+        end
+    )
+    poisonStockInput.Frame:SetPoint("LEFT", poisonStockCheckBox.Frame, "LEFT", 330, 0)
+
+    local poisonStockUnit = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    poisonStockUnit:SetPoint("LEFT", poisonStockInput.Frame, "RIGHT", 8, 0)
+    poisonStockUnit:SetText(L11n.ALERT_POISON_UNIT)
 
     frame:Hide()
 

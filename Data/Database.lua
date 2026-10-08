@@ -28,6 +28,10 @@ local DEFAULTS = {
             enabled = true,
             threshold = 5,
         },
+        stock = {
+            enabled = true,
+            threshold = 5,
+        },
     },
 }
 

@@ -19,5 +19,7 @@ Localization:Register(
         ALERT_TIME_UNIT = "Minutes",
         ALERT_CHARGES = "Warn when poison charges are running low",
         ALERT_CHARGES_UNIT = "Charges",
+        ALERT_POISON = "Warn when the main poison stock is running low",
+        ALERT_POISON_UNIT = "Pieces",
     }
 )
