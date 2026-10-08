@@ -16,7 +16,7 @@ PoisonFlow.Settings = Settings
 -- =========================================================
 
 local FRAME_WIDTH = 600
-local FRAME_HEIGHT = 520
+local FRAME_HEIGHT = 620
 local COLUMN_OFFSET = 145
 
 -- =========================================================
@@ -58,7 +58,7 @@ local function CreateSettingsFrame()
     )
 
     local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    title:SetPoint("TOP", frame, "TOP", 0, -20)
+    title:SetPoint("TOP", frame, "TOP", 0, -10)
     title:SetText(PoisonFlow.Name)
 
     local closeButton = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
@@ -76,10 +76,10 @@ local function CreateSettingsFrame()
     mainHandWeapon.Frame:SetPoint("TOP", mainHandTitle, "BOTTOM", 0, -12)
 
     local mainHandPrimary = PoisonFlow.PoisonSlot:Create(frame, "mainHand", "primary")
-    mainHandPrimary.Frame:SetPoint("TOP", mainHandWeapon.Frame, "BOTTOM", 0, -40)
+    mainHandPrimary.Frame:SetPoint("TOP", mainHandWeapon.Frame, "BOTTOM", 0, -60)
 
-    -- local mainHandFallback = PoisonFlow.PoisonSlot:Create(frame, "mainHand", "fallback")
-    -- mainHandFallback.Frame:SetPoint("TOP", mainHandPrimary.Frame, "BOTTOM", 0, -40)
+    local mainHandFallback = PoisonFlow.PoisonSlot:Create(frame, "mainHand", "fallback")
+    mainHandFallback.Frame:SetPoint("TOP", mainHandPrimary.Frame, "BOTTOM", 0, -80)
 
     -- =========================================================
     -- Off Hand Weapon
@@ -91,6 +91,79 @@ local function CreateSettingsFrame()
 
     local offHandWeapon = PoisonFlow.WeaponSlot:Create(frame, "offHand")
     offHandWeapon.Frame:SetPoint("TOP", offHandTitle, "BOTTOM", 0, -12)
+
+    local offHandPrimary = PoisonFlow.PoisonSlot:Create(frame, "offHand", "primary")
+    offHandPrimary.Frame:SetPoint("TOP", offHandWeapon.Frame, "BOTTOM", 0, -60)
+
+    local offHandFallback = PoisonFlow.PoisonSlot:Create(frame, "offHand", "fallback")
+    offHandFallback.Frame:SetPoint("TOP", offHandPrimary.Frame, "BOTTOM", 0, -80)
+
+    -- =========================================================
+    -- Alerts
+    -- =========================================================
+
+    local db = PoisonFlow.Database:Get()
+    
+    local divider = frame:CreateTexture(nil, "ARTWORK")
+    divider:SetHeight(1)
+    divider:SetPoint("LEFT", frame, "LEFT", 40, 0)
+    divider:SetPoint("RIGHT", frame, "RIGHT", -40, 0)
+    divider:SetPoint("BOTTOM", frame, "BOTTOM", 0, 145)
+    divider:SetColorTexture(0.55, 0.42, 0.18, 1.0)
+
+    local alertsTitle = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    alertsTitle:SetPoint("TOPLEFT", divider, "BOTTOMLEFT", 0, -14)
+    alertsTitle:SetText(L11n.ALERTS)
+
+    local timeCheckBox = PoisonFlow.CheckBox:Create(
+        frame,
+        L11n.ALERT_TIME,
+        db.alerts.time.enabled,
+        function(checked)
+            db.alerts.time.enabled = checked
+        end
+    )
+    timeCheckBox.Frame:SetPoint("TOPLEFT", alertsTitle, "BOTTOMLEFT", 0, -12)
+
+    local timeInput = PoisonFlow.NumberInput:Create(
+        frame,
+        db.alerts.time.threshold,
+        1,
+        30,
+        function(value)
+            db.alerts.time.threshold = value
+        end
+    )
+    timeInput.Frame:SetPoint("LEFT", timeCheckBox.Frame, "LEFT", 330, 0)
+
+    local timeUnit = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    timeUnit:SetPoint("LEFT", timeInput.Frame, "RIGHT", 8, 0)
+    timeUnit:SetText(L11n.ALERT_TIME_UNIT)
+
+    local chargeCheckBox = PoisonFlow.CheckBox:Create(
+        frame,
+        L11n.ALERT_CHARGES,
+        db.alerts.charges.enabled,
+        function(checked)
+            db.alerts.charges.enabled = checked
+        end
+    )
+    chargeCheckBox.Frame:SetPoint("TOPLEFT", timeCheckBox.Frame, "BOTTOMLEFT", 0, -10)
+
+    local chargeInput = PoisonFlow.NumberInput:Create(
+        frame,
+        db.alerts.charges.threshold,
+        1,
+        100,
+        function(value)
+            db.alerts.charges.threshold = value
+        end
+    )
+    chargeInput.Frame:SetPoint("LEFT", chargeCheckBox.Frame, "LEFT", 330, 0)
+
+    local chargeUnit = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    chargeUnit:SetPoint("LEFT", chargeInput.Frame, "RIGHT", 8,0)
+    chargeUnit:SetText(L11n.ALERT_CHARGES_UNIT)
 
     frame:Hide()
 

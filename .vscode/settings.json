@@ -17,7 +17,8 @@
     "Lua.diagnostics.globals": [
         "UIParent",
         "SlashCmdList",
-        "OFF"
+        "OFF",
+        "CreateFontStringPool"
     ],
     "Lua.diagnostics.disable": [
         "assign-type-mismatch"

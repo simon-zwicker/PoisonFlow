@@ -13,6 +13,8 @@ local ADDON_NAME = ...
 ---@field WeaponSlot PoisonFlowWeaponSlot
 ---@field PoisonSlot PoisonFlowPoisonSlot
 ---@field Poison PoisonFlowPoison
+---@field CheckBox PoisonFlowCheckBox
+---@field NumberInput PoisonFlowNumberInput
 
 -- =====================================================
 -- Namespace

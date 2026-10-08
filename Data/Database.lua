@@ -22,7 +22,7 @@ local DEFAULTS = {
     alerts = {
         time = {
             enabled = true,
-            threshold = 120,
+            threshold = 2,
         },
         charges = {
             enabled = true,
