@@ -21,5 +21,12 @@ Localization:Register(
         ALERT_CHARGES_UNIT = "Aufladungen",
         ALERT_POISON = "Warnung bei niedrigem Hauptgiftbestand",
         ALERT_POISON_UNIT = "Stück",
+        REAPPLY = "Erneuern",
+        ALERT_PRIMARY_POISON_LOW = "%s Hauptgift geht zur Neige (%d Stück übrig).",
+        ALERT_PRIMARY_POISON_EMPTY = "%s Hauptgift ist leer! Ersatzgift wird verwendet.",
+        ALERT_PRIMARY_POISON_EMPTY_NO_FALLBACK = "%s Hauptgift ist leer und es wurde kein Ersatzgift eingestellt!",
+        ALERT_FALLBACK_POISON_LOW = "%s Ersatzgift geht zur Neige (%d Stück übrig).",
+        ALERT_ALL_POISONS_EMPTY = "%s Hauptgift und Ersatzgift sind leer!",
+        MINIMAP_TOOLTIP = "Linksklick: Einstellungen öffnen",
     }
 )

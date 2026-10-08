@@ -33,6 +33,9 @@ local DEFAULTS = {
             threshold = 5,
         },
     },
+    minimap = {
+        angle = 225,
+    },
 }
 
 local function ApplyDefaults(target, defaults)

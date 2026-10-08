@@ -21,5 +21,12 @@ Localization:Register(
         ALERT_CHARGES_UNIT = "Charges",
         ALERT_POISON = "Warn when the main poison stock is running low",
         ALERT_POISON_UNIT = "Pieces",
+        REAPPLY = "Reapply",
+        ALERT_PRIMARY_POISON_LOW = "%s primary poison is running low (%d remaining).",
+        ALERT_PRIMARY_POISON_EMPTY = "%s primary poison is empty! Fallback poison will be used.",
+        ALERT_PRIMARY_POISON_EMPTY_NO_FALLBACK = "%s primary poison is empty and no fallback poison is configured!",
+        ALERT_FALLBACK_POISON_LOW = "%s fallback poison is running low (%d remaining).",
+        ALERT_ALL_POISONS_EMPTY = "%s primary and fallback poisons are empty!",
+        MINIMAP_TOOLTIP = "Left-click: Open settings",
     }
 )

@@ -1,8 +1,9 @@
 ## Interface: 16001
 ## Title: PoisonFlow
-## Notes: Drag-and-drop poison configuration for both weapons.
-## Author: Simon Zwicker
+## Notes: Smart poison management and monitoring for Rogues.
+## Author: Mogthar
 ## Version: 0.1.0
+## IconTexture: Interface\AddOns\PoisonFlow\Assets\PoisonFlow
 ## SavedVariablesPerCharacter: PoisonFlowDB
 
 Core\Init.lua
@@ -11,6 +12,8 @@ Core\Localization.lua
 Data\Database.lua
 Data\Poison.lua
 
+Core\PoisonService.lua
+Core\PoisonStockMonitor.lua
 Core\WeaponEnchantService.lua
 Core\PoisonMonitor.lua
 
@@ -22,5 +25,10 @@ UI\PoisonSlot.lua
 UI\Components\CheckBox.lua
 UI\Components\NumberInput.lua
 UI\Settings.lua
+UI\MinimapButton.lua
+
+UI\Alert\ApplyButton.lua
+UI\Alert\ApplyPopup.lua
+UI\Alert\StockWarnings.lua
 
 Core\Commands.lua

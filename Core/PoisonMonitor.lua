@@ -76,6 +76,37 @@ local function CreateAlertState(state)
 end
 
 -- =========================================================
+-- Update Apply Popup
+-- =========================================================
+
+---@param hand string
+---@param state PoisonFlowPoisonMonitorState
+local function UpdateApplyPopup(hand, state)
+    local requiresApply = state.missing or state.timeLow or state.chargesLow
+
+    if not requiresApply then
+        PoisonFlow.ApplyPopup:HideHand(hand)
+        return
+    end
+
+    local itemID = nil
+    local selection = PoisonFlow.PoisonService:GetForHand(hand)
+
+    if selection then
+        itemID = selection.itemID
+    else
+        itemID = state.configuredPoisonID
+    end
+
+    if not itemID then
+        PoisonFlow.ApplyPopup:HideHand(hand)
+        return
+    end
+
+    PoisonFlow.ApplyPopup:ShowHand(hand, itemID)
+end
+
+-- =========================================================
 -- Process State
 -- =========================================================
 
@@ -178,11 +209,15 @@ function PoisonMonitor:Update()
 
     if mainHandState then
         ProcessState("mainHand", mainHandState)
+        UpdateApplyPopup("mainHand", mainHandState)
     end
 
     if offHandState then
         ProcessState("offHand", offHandState)
+        UpdateApplyPopup("offHand", offHandState)
     end
+
+    PoisonFlow.PoisonStockMonitor:Update()
 end
 
 -- =========================================================
@@ -200,7 +235,7 @@ function PoisonMonitor:Initialize()
             if elapsedSinceUpdate < UPDATE_INTERVAL then
                 return
             end
-            elapsedSinceUpdate = 0
+            elapsedSinceUpdate = elapsedSinceUpdate - UPDATE_INTERVAL
             self:Update()
         end
     )
