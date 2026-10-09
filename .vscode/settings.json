@@ -21,7 +21,8 @@
         "CreateFontStringPool",
         "UPDATE",
         "Background",
-        "Add"
+        "Add",
+        "BACK"
     ],
     "Lua.diagnostics.disable": [
         "assign-type-mismatch"

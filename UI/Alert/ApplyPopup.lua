@@ -1,4 +1,6 @@
 local PoisonFlow = _G.PoisonFlow
+local Texture = PoisonFlow.Texture
+local L11n = PoisonFlow.Localization:Get()
 
 -- =========================================================
 -- Types
@@ -16,73 +18,149 @@ PoisonFlow.ApplyPopup = ApplyPopup
 -- =========================================================
 
 local FRAME_WIDTH = 320
-local FRAME_HEIGHT = 150
-local BUTTON_OFFSET = 65
+local FRAME_HEIGHT = 135
+local BUTTON_OFFSET = 78
+local CONTENT_OFFSET_Y = -20
 
 -- =========================================================
 -- Layout
 -- =========================================================
 
-local function UpdateLayout()
-    local mainHandButton = ApplyPopup.MainHandButton
-    local offHandButtn = ApplyPopup.OffHandButton
-
-    if not mainHandButton or not offHandButtn then
-        return
-    end
-
-    local mainHandVisible = mainHandButton.Frame:IsShown()
-    local offHandVisible = offHandButtn.Frame:IsShown()
-    mainHandButton.Frame:ClearAllPoints()
-    offHandButtn.Frame:ClearAllPoints()
-
-    if mainHandVisible or offHandVisible then
-        mainHandButton.Frame:SetPoint("CENTER", ApplyPopup.Frame, "CENTER", -BUTTON_OFFSET, 0)
-        offHandButtn.Frame:SetPoint("CENTER", ApplyPopup.Frame, "CENTER", BUTTON_OFFSET, 0)
-        return
-    end
-
-    if mainHandVisible then
-        mainHandButton.Frame:SetPoint("CENTER", ApplyPopup.Frame, "CENTER", 0, 0)
-        return
-    end
-
-    if offHandVisible then
-        offHandButtn.Frame:SetPoint("CENTER", ApplyPopup.Frame, "CENTER", 0, 0)
-    end
+---@param frame Frame
+local function CreateBorderTexture(frame)
+    local border = frame:CreateTexture(nil, "BORDER")
+    border:SetAllPoints(frame)
+    border:SetTexture(Texture.Window.Frame)
 end
+
+---@param frame Frame
+local function CreateHandDivider(
+    frame
+)
+    local divider =
+        frame:CreateTexture(
+            nil,
+            "ARTWORK"
+        )
+
+    divider:SetColorTexture(
+        0.55,
+        0.40,
+        0.15,
+        0.65
+    )
+
+    divider:SetSize(
+        1,
+        80
+    )
+
+    divider:SetPoint(
+        "CENTER",
+        frame,
+        "CENTER",
+        0,
+        0
+    )
+
+    return divider
+end
+
+-- local function UpdateLayout()
+--     local mainHandButton = ApplyPopup.MainHandButton
+--     local offHandButtn = ApplyPopup.OffHandButton
+
+--     if not mainHandButton or not offHandButtn then
+--         return
+--     end
+
+--     local mainHandVisible = mainHandButton.Frame:IsShown()
+--     local offHandVisible = offHandButtn.Frame:IsShown()
+--     mainHandButton.Frame:ClearAllPoints()
+--     offHandButtn.Frame:ClearAllPoints()
+
+--     if mainHandVisible or offHandVisible then
+--         mainHandButton.Frame:SetPoint("CENTER", ApplyPopup.Frame, "CENTER", -BUTTON_OFFSET, 0)
+--         offHandButtn.Frame:SetPoint("CENTER", ApplyPopup.Frame, "CENTER", BUTTON_OFFSET, 0)
+--         return
+--     end
+
+--     if mainHandVisible then
+--         mainHandButton.Frame:SetPoint("CENTER", ApplyPopup.Frame, "CENTER", 0, 0)
+--         return
+--     end
+
+--     if offHandVisible then
+--         offHandButtn.Frame:SetPoint("CENTER", ApplyPopup.Frame, "CENTER", 0, 0)
+--     end
+-- end
 
 -- =========================================================
 -- Create
 -- =========================================================
 
-local function CreatePopup()
-    local frame = CreateFrame("Frame", "PoisonFlowApplyPopup", UIParent, "BackdropTemplate")
+---@param popup PoisonFlowApplyPopup
+local function CreatePopup(popup)
+    local frame = CreateFrame("Frame", "PoisonFlowApplyPopup", UIParent)
     frame:SetSize(FRAME_WIDTH, FRAME_HEIGHT)
     frame:SetPoint("CENTER", UIParent, "CENTER", 0, 100)
     frame:SetFrameStrata("DIALOG")
-    frame:SetBackdrop({
-        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-        tile = true,
-        tileSize = 32,
-        edgeSize = 32,
-        insets = {
-            left = 8,
-            right = 8,
-            top = 8,
-            bottom = 8,
-        },
-    })
+    frame:SetClampedToScreen(true)
+    frame:SetMovable(true)
+    frame:EnableMouse(true)
+
+    frame:RegisterForDrag(
+        "LeftButton"
+    )
+
+    frame:SetScript(
+        "OnDragStart",
+        function(self)
+            self:StartMoving()
+        end
+    )
+
+    frame:SetScript(
+        "OnDragStop",
+        function(self)
+            self:StopMovingOrSizing()
+        end
+    )
+
+    CreateBorderTexture(frame)
+    CreateHandDivider(frame)
+
+    local closeButton = CreateFrame(
+        "Button",
+        nil,
+        frame,
+        "UIPanelCloseButton"
+    )
+
+    closeButton:SetPoint(
+        "TOPRIGHT",
+        frame,
+        "TOPRIGHT",
+        3,
+        3
+    )
+
+    closeButton:SetScript(
+        "OnClick",
+        function()
+            popup:Hide()
+        end
+    )
 
     local mainHandButton = PoisonFlow.ApplyButton:Create(frame, "mainHand")
     local offHandButton = PoisonFlow.ApplyButton:Create(frame, "offHand")
-    mainHandButton.Frame:Hide()
-    offHandButton.Frame:Hide()
 
-    ApplyPopup.Frame = frame
-    ApplyPopup.MainHandButton = mainHandButton
-    ApplyPopup.OffHandButton = offHandButton
+    mainHandButton.Frame:SetPoint("TOP", frame, "TOP", -BUTTON_OFFSET, CONTENT_OFFSET_Y)
+    offHandButton.Frame:SetPoint("TOP", frame, "TOP", BUTTON_OFFSET, CONTENT_OFFSET_Y)
+
+    popup.Frame = frame
+    popup.MainHandButton = mainHandButton
+    popup.OffHandButton = offHandButton
 
     frame:Hide()
 end
@@ -95,22 +173,23 @@ function ApplyPopup:Initialize()
     if self.Frame then
         return
     end
-    CreatePopup()
+    CreatePopup(self)
 end
 
 -- =========================================================
 -- Hand
 -- =========================================================
 
+---@param popup PoisonFlowApplyPopup
 ---@param hand string
 ---@return PoisonFlowApplyButtonInstance?
-local function GetButton(hand)
+local function GetButton(popup, hand)
     if hand == "mainHand" then
-        return ApplyPopup.MainHandButton
+        return popup.MainHandButton
     end
 
     if hand == "offHand" then
-        return ApplyPopup.OffHandButton
+        return popup.OffHandButton
     end
 
     return nil
@@ -118,19 +197,20 @@ end
 
 ---@param hand string
 ---@param itemID number
-function ApplyPopup:ShowHand(hand, itemID)
+---@param state PoisonFlowPoisonMonitorState
+function ApplyPopup:ShowHand(hand, itemID, state)
     self:Initialize()
-    local button = GetButton(hand)
+    local button = GetButton(self, hand)
 
     if not button then
         return
     end
 
-    PoisonFlow.ApplyButton:SetPoison(button, itemID)
+    PoisonFlow.ApplyButton:SetPoison(button, itemID, state)
     
     button.Frame:Show()
 
-    UpdateLayout()
+    -- UpdateLayout()
 
     self.Frame:Show()
 end
@@ -141,7 +221,7 @@ function ApplyPopup:HideHand(hand)
         return
     end
 
-    local button = GetButton(hand)
+    local button = GetButton(self, hand)
 
     if not button then
         return
@@ -157,7 +237,7 @@ function ApplyPopup:HideHand(hand)
         return
     end
 
-    UpdateLayout()
+    -- UpdateLayout()
 end
 
 -- =========================================================

@@ -28,5 +28,11 @@ Localization:Register(
         ALERT_FALLBACK_POISON_LOW = "%s fallback poison is running low (%d remaining).",
         ALERT_ALL_POISONS_EMPTY = "%s primary and fallback poisons are empty!",
         MINIMAP_TOOLTIP = "Left-click: Open settings",
+        POISON_TIME_REMAINING = "Time remaining: %s",
+        POISON_CHARGES_REMAINING = "Charges: %d",
+        POISON_STATUS_OK = "Poison is active",
+        POISON_STATUS_REAPPLY = "Reapplication recommended",
+        POISON_STATUS_EXPIRED = "Poison expired",
+        ACTIVE = "Active",
     }
 )

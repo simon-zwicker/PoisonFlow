@@ -28,5 +28,11 @@ Localization:Register(
         ALERT_FALLBACK_POISON_LOW = "%s Ersatzgift geht zur Neige (%d Stück übrig).",
         ALERT_ALL_POISONS_EMPTY = "%s Hauptgift und Ersatzgift sind leer!",
         MINIMAP_TOOLTIP = "Linksklick: Einstellungen öffnen",
+        POISON_TIME_REMAINING = "Verbleibende Zeit: %s",
+        POISON_CHARGES_REMAINING = "Aufladungen: %d",
+        POISON_STATUS_OK = "Gift ist aktiv",
+        POISON_STATUS_REAPPLY = "Erneuerung empfohlen",
+        POISON_STATUS_EXPIRED = "Gift abgelaufen",
+        ACTIVE = "Aktiv",
     }
 )

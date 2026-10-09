@@ -79,18 +79,30 @@ end
 -- Update Apply Popup
 -- =========================================================
 
----@param hand string
----@param state PoisonFlowPoisonMonitorState
-local function UpdateApplyPopup(hand, state)
-    local requiresApply = state.missing or state.timeLow or state.chargesLow
-
-    if not requiresApply then
-        PoisonFlow.ApplyPopup:HideHand(hand)
-        return
+---@param state PoisonFlowPoisonMonitorState?
+---@return boolean
+local function RequiresApply(state)
+    if not state then
+        return false
     end
 
+    return state.missing
+        or state.timeLow
+        or state.chargesLow
+end
+
+---@param hand string
+---@param state PoisonFlowPoisonMonitorState
+local function UpdatePopupHand(
+    hand,
+    state
+)
     local itemID = nil
-    local selection = PoisonFlow.PoisonService:GetForHand(hand)
+
+    local selection =
+        PoisonFlow.PoisonService:GetForHand(
+            hand
+        )
 
     if selection then
         itemID = selection.itemID
@@ -99,11 +111,44 @@ local function UpdateApplyPopup(hand, state)
     end
 
     if not itemID then
-        PoisonFlow.ApplyPopup:HideHand(hand)
         return
     end
 
-    PoisonFlow.ApplyPopup:ShowHand(hand, itemID)
+    PoisonFlow.ApplyPopup:ShowHand(
+        hand,
+        itemID,
+        state
+    )
+end
+
+---@param mainHandState PoisonFlowPoisonMonitorState?
+---@param offHandState PoisonFlowPoisonMonitorState?
+local function UpdateApplyPopup(
+    mainHandState,
+    offHandState
+)
+    local requiresApply =
+        RequiresApply(mainHandState)
+        or RequiresApply(offHandState)
+
+    if not requiresApply then
+        PoisonFlow.ApplyPopup:Hide()
+        return
+    end
+
+    if mainHandState then
+        UpdatePopupHand(
+            "mainHand",
+            mainHandState
+        )
+    end
+
+    if offHandState then
+        UpdatePopupHand(
+            "offHand",
+            offHandState
+        )
+    end
 end
 
 -- =========================================================
@@ -209,13 +254,13 @@ function PoisonMonitor:Update()
 
     if mainHandState then
         ProcessState("mainHand", mainHandState)
-        UpdateApplyPopup("mainHand", mainHandState)
     end
 
     if offHandState then
         ProcessState("offHand", offHandState)
-        UpdateApplyPopup("offHand", offHandState)
     end
+
+    UpdateApplyPopup(mainHandState, offHandState)
 
     PoisonFlow.PoisonStockMonitor:Update()
 end
