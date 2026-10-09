@@ -22,7 +22,8 @@
         "UPDATE",
         "Background",
         "Add",
-        "BACK"
+        "BACK",
+        "DEFAULTS"
     ],
     "Lua.diagnostics.disable": [
         "assign-type-mismatch"

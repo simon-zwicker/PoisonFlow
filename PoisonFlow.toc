@@ -29,8 +29,7 @@ UI\Components\NumberInput.lua
 UI\Settings.lua
 UI\MinimapButton.lua
 
-UI\Alert\ApplyButton.lua
-UI\Alert\ApplyPopup.lua
+UI\PoisonFlowButton.lua
 UI\Alert\StockWarnings.lua
 
 Core\Commands.lua

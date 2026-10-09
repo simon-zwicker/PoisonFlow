@@ -11,6 +11,8 @@ PoisonFlow.Texture = Texture
 local BASE_PATH = "Interface\\AddOns\\PoisonFlow\\Assets\\UI\\"
 local ICON_PATH = "Interface\\AddOns\\PoisonFlow\\Assets\\PoisonFlow"
 
+Texture.Icon = ICON_PATH
+
 -- =========================================================
 -- Window
 -- =========================================================

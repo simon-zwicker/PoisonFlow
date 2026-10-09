@@ -49,9 +49,6 @@ function StockWarnings:Initialize()
         return
     end
     CreateStockFrame()
-
-    PoisonFlow.ApplyPopup:Initialize()
-    self.Frame:SetPoint("BOTTOM", PoisonFlow.ApplyPopup.Frame, "TOP", 0, 8)
 end
 
 -- =========================================================

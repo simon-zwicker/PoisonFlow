@@ -113,12 +113,6 @@ local function UpdatePopupHand(
     if not itemID then
         return
     end
-
-    PoisonFlow.ApplyPopup:ShowHand(
-        hand,
-        itemID,
-        state
-    )
 end
 
 ---@param mainHandState PoisonFlowPoisonMonitorState?
@@ -130,12 +124,7 @@ local function UpdateApplyPopup(
     local requiresApply =
         RequiresApply(mainHandState)
         or RequiresApply(offHandState)
-
-    if not requiresApply then
-        PoisonFlow.ApplyPopup:Hide()
-        return
-    end
-
+        
     if mainHandState then
         UpdatePopupHand(
             "mainHand",

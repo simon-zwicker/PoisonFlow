@@ -17,13 +17,12 @@ local ADDON_NAME = ...
 ---@field CheckBox PoisonFlowCheckBox
 ---@field NumberInput PoisonFlowNumberInput
 ---@field PoisonMonitor PoisonFlowPoisonMonitor
----@field ApplyButton PoisonFlowApplyButton
----@field ApplyPopup PoisonFlowApplyPopup
 ---@field PoisonService PoisonFlowPoisonService
 ---@field PoisonStockMonitor PoisonFlowPoisonStockMonitor
 ---@field StockWarnings PoisonFlowStockWarnings
 ---@field MinimapButton PoisonFlowMinimapButton
 ---@field Texture PoisonFlowTexture
+---@field PoisonFlowButton PoisonFlowButton
 
 local PoisonFlow = {}
 
@@ -45,6 +44,7 @@ eventFrame:SetScript(
         end
 
         PoisonFlow.Database:Initialize()
+        PoisonFlow.PoisonFlowButton:Initialize()
         PoisonFlow.PoisonMonitor:Initialize()
         PoisonFlow.MinimapButton:Initialize()
         local L11n = PoisonFlow.Localization:Get()

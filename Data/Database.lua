@@ -36,6 +36,12 @@ local DEFAULTS = {
     minimap = {
         angle = 225,
     },
+    poisonFlowButton = {
+        point = "CENTER",
+        relativePoint = "CENTER",
+        x = 0,
+        y = 0,
+    },
 }
 
 local function ApplyDefaults(target, defaults)
