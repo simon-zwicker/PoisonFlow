@@ -313,6 +313,68 @@ local POISONS = {
 }
 
 -- =========================================================
+-- Weapon Enchant Mapping
+-- =========================================================
+
+---@class PoisonFlowEnchantData
+---@field type string
+---@field rank number
+
+---@type table<number, PoisonFlowEnchantData>
+local ENCHANT_TYPES = {
+    -- =====================================================
+    -- Instant Poison
+    -- =====================================================
+
+    [323] = { type = Poison.Type.Instant, rank = 1 },
+    [324] = { type = Poison.Type.Instant, rank = 2 },
+    [325] = { type = Poison.Type.Instant, rank = 3 },
+    [623] = { type = Poison.Type.Instant, rank = 4 },
+    [624] = { type = Poison.Type.Instant, rank = 5 },
+    [625] = { type = Poison.Type.Instant, rank = 6 },
+
+    -- =====================================================
+    -- Deadly Poison
+    -- =====================================================
+
+    [7]    = { type = Poison.Type.Deadly, rank = 1 },
+    [8]    = { type = Poison.Type.Deadly, rank = 2 },
+    [626]  = { type = Poison.Type.Deadly, rank = 3 },
+    [627]  = { type = Poison.Type.Deadly, rank = 4 },
+    [2630] = { type = Poison.Type.Deadly, rank = 5 },
+
+    -- =====================================================
+    -- Crippling Poison
+    -- =====================================================
+
+    [22]  = { type = Poison.Type.Crippling, rank = 1 },
+    [603] = { type = Poison.Type.Crippling, rank = 2 },
+
+    -- =====================================================
+    -- Mind-Numbing Poison
+    -- =====================================================
+
+    [35]  = { type = Poison.Type.MindNumbing, rank = 1 },
+    [23]  = { type = Poison.Type.MindNumbing, rank = 2 },
+    [643] = { type = Poison.Type.MindNumbing, rank = 3 },
+
+    -- =====================================================
+    -- Wound Poison
+    -- =====================================================
+
+    [703] = { type = Poison.Type.Wound, rank = 1 },
+    [704] = { type = Poison.Type.Wound, rank = 2 },
+    [705] = { type = Poison.Type.Wound, rank = 3 },
+    [706] = { type = Poison.Type.Wound, rank = 4 },
+
+    -- =====================================================
+    -- Occult Poison (Forever)
+    -- =====================================================
+
+    [7542] = { type = Poison.Type.Occult, rank = 1 },
+}
+
+-- =========================================================
 -- GET
 -- =========================================================
 
@@ -320,6 +382,56 @@ local POISONS = {
 ---@return PoisonFlowPoisonInfo?
 function Poison:Get(itemID)
     return POISONS[itemID]
+end
+
+-- =========================================================
+-- Get By Enchant
+-- =========================================================
+
+---@param enchantID number?
+---@return PoisonFlowEnchantData?
+function Poison:GetByEnchant(enchantID)
+    if not enchantID then
+        return nil
+    end
+
+    return ENCHANT_TYPES[enchantID]
+end
+
+-- =========================================================
+-- Get Poison By Enchant
+-- =========================================================
+
+---@param enchantID number?
+---@return PoisonFlowPoisonInfo?
+function Poison:GetPoisonByEnchant(enchantID)
+    local enchant = self:GetByEnchant(enchantID)
+
+    if not enchant then
+        return nil
+    end
+
+    for _, poison in pairs(POISONS) do
+        if poison.type == enchant.type
+            and poison.rank == enchant.rank
+        then
+            return poison
+        end
+    end
+
+    return nil
+end
+
+-- =========================================================
+-- Get Type By Enchant
+-- =========================================================
+
+---@param enchantID number?
+---@return string?
+function Poison:GetTypeByEnchant(enchantID)
+    local enchant = self:GetByEnchant(enchantID)
+
+    return enchant and enchant.type or nil
 end
 
 -- =========================================================

@@ -2,34 +2,51 @@
 ## Title: PoisonFlow
 ## Notes: Smart poison management and monitoring for Rogues.
 ## Author: Mogthar
-## Version: 0.1.0
+## Version: 1.0.0
 ## IconTexture: Interface\AddOns\PoisonFlow\Assets\PoisonFlow
 ## SavedVariablesPerCharacter: PoisonFlowDB
 
 Core\Init.lua
-Core\Localization.lua
+
+Libs\LibStub\LibStub.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
+Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
+Libs\LibDBIcon-1.0\LibDBIcon-1.0.lua
+
+Localization\Core.lua
 
 Data\Database.lua
 Data\Poison.lua
 
 Core\PoisonService.lua
-Core\PoisonStockMonitor.lua
 Core\WeaponEnchantService.lua
+Core\PoisonStockMonitor.lua
 Core\PoisonMonitor.lua
 
 Localization\enUS.lua
 Localization\deDE.lua
+Localization\frFR.lua
+Localization\esES.lua
+Localization\esMX.lua
+Localization\ptBR.lua
+Localization\itIT.lua
+Localization\ruRU.lua
+Localization\koKR.lua
+Localization\zhCN.lua
+Localization\zhTW.lua
 
 UI\Theme\Texture.lua
 
 UI\WeaponSlot.lua
 UI\PoisonSlot.lua
 UI\Components\CheckBox.lua
-UI\Components\NumberInput.lua
+UI\Components\Slider.lua
 UI\Settings.lua
 UI\MinimapButton.lua
 
+UI\PoisonFlowButtonTooltip.lua
 UI\PoisonFlowButton.lua
-UI\Alert\StockWarnings.lua
+UI\Alert\Warning.lua
+UI\Alert\WarningManager.lua
 
 Core\Commands.lua

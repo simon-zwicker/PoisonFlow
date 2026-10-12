@@ -1,4 +1,4 @@
-local PoisonFow = _G.PoisonFlow
+local PoisonFlow = _G.PoisonFlow
 local L11n = PoisonFlow.Localization:Get()
 
 -- =========================================================
@@ -23,7 +23,7 @@ PoisonFlow.PoisonSlot = PoisonSlot
 -- Constants
 -- =========================================================
 
-local PRIMARY_SIZE = 64
+local PRIMARY_SIZE = 56
 local FALLBACK_SIZE = 40
 
 -- =========================================================
@@ -47,9 +47,9 @@ end
 ---@return string
 local function GetSlotTitle(slotType)
     if slotType == "primary" then
-        return L11n.PRIMARY_POISON
+        return L11n.Main.PRIMARY_POISON
     end
-    return L11n.FALLBACK_POISON
+    return L11n.Main.FALLBACK_POISON
 end
 
 -- =========================================================
@@ -59,7 +59,7 @@ end
 ---@param slot PoisonFlowPoisonSlotInstance
 ---@return number?
 local function GetPoisonData(slot)
-    local db = PoisonFow.Database:Get()
+    local db = PoisonFlow.Database:Get()
     local handData = db[slot.Hand]
     
     if not handData then
@@ -76,8 +76,6 @@ end
 ---@param slot PoisonFlowPoisonSlotInstance
 local function Update(slot)
     local itemID = GetPoisonData(slot)
-
-
     if not itemID then
         slot.Icon:SetTexture(nil)
         slot.Icon:Hide()
@@ -104,7 +102,7 @@ local function Update(slot)
     end
 
     slot.Name:SetText(itemName or "")
-    slot.Count:SetText(string.format(L11n.ITEM_COUNT, itemCount or 0))
+    slot.Count:SetText(string.format(L11n.Settings.ITEM_COUNT, itemCount or 0))
 end
 
 -- =========================================================
@@ -121,7 +119,16 @@ local function SetPoisonData(slot, itemID)
         return
     end
 
+    -- Nothing changed.
+    if handData[slot.SlotType] == itemID then
+        return
+    end
+
     handData[slot.SlotType] = itemID
+
+    -- Update the Apply button immediately.
+    PoisonFlow.PoisonFlowButton:Refresh()
+    PoisonFlow.PoisonMonitor:Update()
 end
 
 -- =========================================================
@@ -142,17 +149,16 @@ local function HandleCursorItem(slot)
 
     local itemID = cursorData
     
-    if not PoisonFow.Poison:IsPoison(itemID) then
-        print("|cffff4444PoisonFlow:|r", L11n.INVALID_POISON, itemLink)
+    if not PoisonFlow.Poison:IsPoison(itemID) then
+        print("|cffff4444PoisonFlow:|r", L11n.Settings.INVALID_POISON, itemLink)
         return
     end
 
     SetPoisonData(slot, itemID)
-    print("PoisonFlow DEBUG saved: ", slot.Hand, slot.SlotType, itemID, GetPoisonData(slot))
     Update(slot)
     ClearCursor()
 
-    print("|cff00cc66PoisonFlow:|r", L11n.VALID_POISON, itemLink)
+    print("|cff00cc66PoisonFlow:|r", L11n.Settings.VALID_POISON, itemLink)
 end
 
 -- =========================================================
@@ -208,16 +214,18 @@ function PoisonSlot:Create(parent, hand, slotType)
     plus:SetPoint("CENTER")
     plus:SetText("+")
 
-    local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    title:SetPoint("BOTTOM", frame, "TOP", 0, 8)
+    local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    title:SetPoint("BOTTOM", frame, "TOP", 0, 6)
     title:SetText(GetSlotTitle(slotType))
 
-    local name = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    name:SetPoint("TOP", frame, "BOTTOM", 0, -8)
+    local name = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    name:SetPoint("TOP", frame, "BOTTOM", 0, -5)
+    name:SetWidth(155)
+    name:SetWordWrap(false)
     name:SetText("")
 
     local count = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-    count:SetPoint("TOP", name, "BOTTOM", 0, -3)
+    count:SetPoint("TOP", name, "BOTTOM", 0, -2)
     count:SetText("")
 
     local slot = {

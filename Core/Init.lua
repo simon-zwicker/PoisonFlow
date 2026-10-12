@@ -15,20 +15,22 @@ local ADDON_NAME = ...
 ---@field WeaponSlot PoisonFlowWeaponSlot
 ---@field PoisonSlot PoisonFlowPoisonSlot
 ---@field CheckBox PoisonFlowCheckBox
----@field NumberInput PoisonFlowNumberInput
+---@field Slider PoisonFlowSlider
 ---@field PoisonMonitor PoisonFlowPoisonMonitor
 ---@field PoisonService PoisonFlowPoisonService
 ---@field PoisonStockMonitor PoisonFlowPoisonStockMonitor
----@field StockWarnings PoisonFlowStockWarnings
+---@field WarningManager PoisonFlowWarningManager
 ---@field MinimapButton PoisonFlowMinimapButton
 ---@field Texture PoisonFlowTexture
 ---@field PoisonFlowButton PoisonFlowButton
+---@field Warning PoisonFlowWarning
+---@field ButtonTooltip PoisonFlowButtonTooltip
 
 local PoisonFlow = {}
 
 _G.PoisonFlow = PoisonFlow
 PoisonFlow.Name = ADDON_NAME
-PoisonFlow.Version = "0.1.0"
+PoisonFlow.Version = "1.0.0"
 
 local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("ADDON_LOADED")
@@ -45,11 +47,12 @@ eventFrame:SetScript(
 
         PoisonFlow.Database:Initialize()
         PoisonFlow.PoisonFlowButton:Initialize()
-        PoisonFlow.PoisonMonitor:Initialize()
         PoisonFlow.MinimapButton:Initialize()
+        PoisonFlow.WarningManager:Initialize()
+        PoisonFlow.PoisonMonitor:Initialize()
         local L11n = PoisonFlow.Localization:Get()
         
-        print("|cff00cc66PoisonFlow|r " .. L11n.LOADED)
+        print("|cff00cc66PoisonFlow|r " .. L11n.Main.LOADED .. "Version: " .. PoisonFlow.Version)
         self:UnregisterEvent("ADDON_LOADED")
     end
 )

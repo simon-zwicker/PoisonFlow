@@ -34,7 +34,8 @@ local DEFAULTS = {
         },
     },
     minimap = {
-        angle = 225,
+        hide = false,
+        minimapPos = 225,
     },
     poisonFlowButton = {
         point = "CENTER",

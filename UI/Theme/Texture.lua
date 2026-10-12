@@ -9,9 +9,9 @@ PoisonFlow.Texture = Texture
 -- =========================================================
 
 local BASE_PATH = "Interface\\AddOns\\PoisonFlow\\Assets\\UI\\"
-local ICON_PATH = "Interface\\AddOns\\PoisonFlow\\Assets\\PoisonFlow"
-
-Texture.Icon = ICON_PATH
+Texture.Icon = "Interface\\AddOns\\PoisonFlow\\Assets\\PoisonFlow"
+Texture.PoisonButtonFrame = "Interface\\AddOns\\PoisonFlow\\Assets\\PoisonFlowGoldFrame"
+Texture.RogueIcon = "Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes"
 
 -- =========================================================
 -- Window

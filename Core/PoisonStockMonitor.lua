@@ -17,6 +17,14 @@ local L11n = PoisonFlow.Localization:Get()
 ---@field usingFallback boolean
 ---@field completelyEmpty boolean
 
+---@class PoisonFlowWarnings
+---@field id string
+---@field stateKey string
+---@field weaponSlot number
+---@field headline string
+---@field description string
+---@field severity string
+
 ---@class PoisonFlowPoisonStockMonitor
 local PoisonStockMonitor = {}
 PoisonFlow.PoisonStockMonitor = PoisonStockMonitor
@@ -81,85 +89,180 @@ end
 ---@return string
 local function GetHandLabel(hand)
     if hand == "mainHand" then
-        return L11n.MAIN_HAND
+        return L11n.Main.MAIN_HAND
     end
-    return L11n.OFF_HAND
+    return L11n.Main.OFF_HAND
 end
+
+-- =========================================================
+-- Build Warnings
+-- =========================================================
 
 ---@param hand string
 ---@param state PoisonFlowPoisonStockState
----@return string[]
-local function BuildMessages(hand, state)
-    local messages = {}
-    local handLabel = GetHandLabel(hand)
+---@return PoisonFlowWarnings[]
+local function BuildWarnings(hand, state)
+    ---@type PoisonFlowWarnings[]
+    local warnings = {}
 
-    -- No primary poison configured
     if not state.primaryItemID then
-        return messages
+        return warnings
     end
 
-    -- Primary and configured fallback are both empty
+    local handLabel = GetHandLabel(hand)
+    local weaponSlot = hand == "mainHand" and 16 or 17
+
+    ---@param warningType string
+    ---@param headline string
+    ---@param description string
+    ---@param severity string
+    local function AddWarning(warningType, headline, description, severity)
+        table.insert(
+            warnings,
+            {
+                id = "stock:" .. hand .. ":" .. warningType,
+                stateKey = warningType,
+                weaponSlot = weaponSlot,
+                headline = headline,
+                description = description,
+                severity = severity,
+            }
+        )
+    end
+
+    -- Primary and fallback are both empty
     if state.primaryEmpty and state.fallbackItemID and state.fallbackEmpty then
-        table.insert(messages, string.format(L11n.ALERT_ALL_POISONS_EMPTY, handLabel))
-        return messages
+        AddWarning(
+            "allEmpty",
+            L11n.Warning.TITLE_ALL_EMPTY,
+            string.format(
+                L11n.Warning.MESSAGE_ALL_EMPTY,
+                handLabel
+            ),
+            "danger"
+        )
+
+        return warnings
     end
 
-    -- Primary is empty and no fallback is configured
+    -- Primary empty without fallback
     if state.primaryEmpty and not state.fallbackItemID then
-        table.insert(messages, string.format(L11n.ALERT_PRIMARY_POISON_EMPTY_NO_FALLBACK, handLabel))
-        return messages
+        AddWarning(
+            "noFallback",
+            L11n.Warning.TITLE_NO_FALLBACK,
+            string.format(
+                L11n.Warning.MESSAGE_NO_FALLBACK,
+                handLabel
+            ),
+            "danger"
+        )
+        return warnings
     end
 
-    -- Primary is empty, fallback is available
+    -- Primary empty, fallback available
     if state.primaryEmpty then
-        table.insert(messages, string.format(L11n.ALERT_PRIMARY_POISON_EMPTY, handLabel))
+        AddWarning(
+            "primaryEmpty",
+            L11n.Warning.TITLE_PRIMARY_EMPTY,
+            string.format(
+                L11n.Warning.MESSAGE_PRIMARY_EMPTY,
+                handLabel
+            ),
+            "danger"
+        )
+
         if state.fallbackLow then
-            table.insert(messages, string.format(L11n.ALERT_FALLBACK_POISON_LOW, handLabel, state.fallbackCount))
+            AddWarning(
+                "fallbackLow",
+                L11n.Warning.TITLE_FALLBACK_LOW,
+                string.format(
+                    L11n.Warning.MESSAGE_FALLBACK_LOW,
+                    handLabel,
+                    state.fallbackCount
+                ),
+                "warning"
+            )
         end
-        return messages
+        return warnings
     end
 
-    -- Primary is still available but running low.
+    -- Primary running low
     if state.primaryLow then
-        table.insert(messages, string.format(L11n.ALERT_PRIMARY_POISON_LOW, handLabel, state.primaryCount))
+        AddWarning(
+            "primaryLow",
+            L11n.Warning.TITLE_PRIMARY_LOW,
+            string.format(
+                L11n.Warning.MESSAGE_PRIMARY_LOW,
+                handLabel,
+                state.primaryCount
+            ),
+            "warning"
+        )
     end
 
-    return messages
+    return warnings
 end
 
----@return string[]
-function PoisonStockMonitor:GetMessages()
-    local messages = {}
+-- =========================================================
+-- Get Warnings
+-- =========================================================
+
+---@return PoisonFlowWarnings[]
+function PoisonStockMonitor:GetWarnings()
+    ---@type PoisonFlowWarnings[]
+    local warnings = {}
     local db = PoisonFlow.Database:Get()
 
     if not db.alerts.stock.enabled then
-        return messages
+        return warnings
     end
 
-    local mainHandState = self:GetState("mainHand")
-    if mainHandState then
-        local mainHandMessages = BuildMessages("mainHand", mainHandState)
-        for _, message in ipairs(mainHandMessages) do
-            table.insert(messages, message)
+    local hands = { "mainHand", "offHand", }
+
+    for _, hand in ipairs(hands) do
+        local state = self:GetState(hand)
+        if state then
+            local handWarnings = BuildWarnings(hand, state)
+            for _, warning in ipairs(handWarnings) do
+                table.insert(warnings, warning)
+            end
         end
     end
 
-    local offHandState = self:GetState("offHand")
-    if offHandState then
-        local offHandMessages = BuildMessages("offHand", offHandState)
-        for _, message in ipairs(offHandMessages) do
-            table.insert(messages, message)
-        end
-    end
-
-    return messages
+    return warnings
 end
 
 -- =========================================================
--- Update Messages
+-- Update Warnings
 -- =========================================================
 
 function PoisonStockMonitor:Update()
-    local messages = self:GetMessages()
-    PoisonFlow.StockWarnings:SetMessages(messages)
+    local warnings = self:GetWarnings()
+    local manager = PoisonFlow.WarningManager
+    if not manager or not manager.Container then
+        return
+    end
+
+    local activeIDs = {}
+    for _, warning in ipairs(warnings) do
+        activeIDs[warning.id] = true
+
+        manager:Show(
+            warning.id,
+            {
+                weaponSlot = warning.weaponSlot,
+                headline = warning.headline,
+                description = warning.description,
+                severity = warning.severity,
+            },
+            warning.stateKey
+        )
+    end
+
+    -- Remove warnings that are no longer relevant.
+    for id in pairs(manager.Entries) do
+        if string.sub(id, 1, 6) == "stock:" and not activeIDs[id] then
+            manager:Remove(id)
+        end
+    end
 end

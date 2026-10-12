@@ -23,7 +23,13 @@
         "Background",
         "Add",
         "BACK",
-        "DEFAULTS"
+        "DEFAULTS",
+        "AddonCompartmentFrame",
+        "Minimap",
+        "GameTooltip",
+        "STANDARD_TEXT_FONT",
+        "Settings",
+        "PRIMARY"
     ],
     "Lua.diagnostics.disable": [
         "assign-type-mismatch"

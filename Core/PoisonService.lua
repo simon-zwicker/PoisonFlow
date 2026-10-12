@@ -22,8 +22,31 @@ local function IsAvailable(itemID)
     if not itemID then
         return false
     end
-    local count = C_Item.GetItemCount(itemID)
-    return count > 0
+
+    return C_Item.GetItemCount(
+        itemID,
+        false,
+        false,
+        false
+    ) > 0
+end
+
+-- =========================================================
+-- Configuration
+-- =========================================================
+
+---@param hand string
+---@return boolean
+function PoisonService:IsConfigured(hand)
+    local db = PoisonFlow.Database:Get()
+    local config = db and db[hand]
+
+    if not config then
+        return false
+    end
+
+    return config.primary ~= nil
+        or config.fallback ~= nil
 end
 
 -- =========================================================
@@ -34,26 +57,22 @@ end
 ---@return PoisonFlowPoisonSelection?
 function PoisonService:GetForHand(hand)
     local db = PoisonFlow.Database:Get()
-    local handData = db[hand]
+    local config = db and db[hand]
 
-    if not handData then
+    if not config then
         return nil
     end
 
-    local primary = handData.primary
-
-    if IsAvailable(primary) then
+    if IsAvailable(config.primary) then
         return {
-            itemID = primary,
+            itemID = config.primary,
             isFallback = false,
         }
     end
 
-    local fallback = handData.fallback
-
-    if IsAvailable(fallback) then
+    if IsAvailable(config.fallback) then
         return {
-            itemID = fallback,
+            itemID = config.fallback,
             isFallback = true,
         }
     end

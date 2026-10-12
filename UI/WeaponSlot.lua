@@ -1,4 +1,5 @@
 local PoisonFlow = _G.PoisonFlow
+local L11n = PoisonFlow.Localization:Get()
 
 -- =========================================================
 -- Types
@@ -8,6 +9,12 @@ local PoisonFlow = _G.PoisonFlow
 ---@field Frame Button
 ---@field Icon Texture
 ---@field InventorySlotID number
+---@field EnchantSlot number
+---@field StatusTitle FontString
+---@field StatusName FontString
+---@field StatusTime FontString
+---@field StatusCharges FontString
+---@field Update fun(self: PoisonFlowWeaponSlotInstance)
 
 ---@class PoisonFlowWeaponSlot
 local WeaponSlot = {}
@@ -18,9 +25,18 @@ PoisonFlow.WeaponSlot = WeaponSlot
 -- Constants
 -- =========================================================
 
-local SLOT_SIZE = 64
+local SLOT_SIZE = 48
+
 local MAIN_HAND_SLOT = 16
 local OFF_HAND_SLOT = 17
+
+local MAIN_HAND_ENCHANT_SLOT = 0
+local OFF_HAND_ENCHANT_SLOT = 1
+
+local STATUS_COLOR = {
+    Normal = { 1.0, 1.0, 1.0 },
+    Danger = { 1.0, 0.2, 0.2 },
+}
 
 -- =========================================================
 -- Get Inventory Slot
@@ -36,12 +52,32 @@ local function GetInventorySlotID(hand)
 end
 
 -- =========================================================
+-- Get Enchant Slot
+-- =========================================================
+
+---@param hand string
+---@return number
+local function GetEnchantSlot(hand)
+    if hand == "mainHand" then
+        return MAIN_HAND_ENCHANT_SLOT
+    end
+    return OFF_HAND_ENCHANT_SLOT
+end
+
+-- =========================================================
 -- Update
 -- =========================================================
 
 ---@param slot PoisonFlowWeaponSlotInstance
 local function Update(slot)
-    local texture = GetInventoryItemTexture("player", slot.InventorySlotID)
+    -- =========================================================
+    -- Weapon Icon
+    -- =========================================================
+
+    local texture = GetInventoryItemTexture(
+        "player",
+        slot.InventorySlotID
+    )
 
     if texture then
         slot.Icon:SetTexture(texture)
@@ -49,6 +85,85 @@ local function Update(slot)
     else
         slot.Icon:SetTexture(nil)
         slot.Icon:Hide()
+    end
+
+    -- =========================================================
+    -- Weapon Not Equipped
+    -- =========================================================
+
+    local weaponEquipped = PoisonFlow.WeaponEnchantService:IsWeaponEquipped(
+        slot.EnchantSlot
+    )
+
+    if not weaponEquipped then
+        slot.StatusName:SetText(L11n.Main.WEAPON_NOT_EQUIPPED)
+
+        slot.StatusName:SetTextColor(
+            unpack(STATUS_COLOR.Danger)
+        )
+
+        slot.StatusTime:SetText("")
+        slot.StatusCharges:SetText("")
+
+        return
+    end
+
+    -- =========================================================
+    -- Weapon Enchant
+    -- =========================================================
+
+    slot.StatusName:SetTextColor(
+        unpack(STATUS_COLOR.Normal)
+    )
+
+    local enchant = PoisonFlow.WeaponEnchantService:Get(
+        slot.EnchantSlot
+    )
+
+    if not enchant then
+        slot.StatusName:SetText(L11n.Main.NO_ACTIVE_POISON)
+        slot.StatusTime:SetText("")
+        slot.StatusCharges:SetText("")
+
+        return
+    end
+
+    slot.StatusName:SetText(
+        enchant.name or L11n.Main.POISON_ACTIVE
+    )
+
+    -- =========================================================
+    -- Remaining Time
+    -- =========================================================
+
+    if enchant.remainingTimeMs and enchant.remainingTimeMs > 0 then
+        local minutes = math.ceil(
+            enchant.remainingTimeMs / 60000
+        )
+
+        slot.StatusTime:SetText(
+            string.format(
+                L11n.Main.REMAINING_MINUTES,
+                minutes
+            )
+        )
+    else
+        slot.StatusTime:SetText("")
+    end
+
+    -- =========================================================
+    -- Charges
+    -- =========================================================
+
+    if enchant.charges and enchant.charges > 0 then
+        slot.StatusCharges:SetText(
+            string.format(
+                L11n.Main.REMAINING_CHARGES,
+                enchant.charges
+            )
+        )
+    else
+        slot.StatusCharges:SetText("")
     end
 end
 
@@ -76,12 +191,41 @@ function WeaponSlot:Create(parent, hand)
     icon:SetPoint("TOPLEFT", frame, "TOPLEFT", 3, -3)
     icon:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -3, 3)
 
+    -- =========================================================
+    -- Current Poison Status
+    -- =========================================================
+
+    local statusTitle = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    statusTitle:SetPoint("TOP", frame, "BOTTOM", 0, -12)
+    statusTitle:SetText(L11n.Main.CURRENT_POISON)
+
+    local statusName = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    statusName:SetPoint("TOP", statusTitle, "BOTTOM", 0, -4)
+    statusName:SetWidth(140)
+    statusName:SetJustifyH("CENTER")
+
+    local statusTime = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    statusTime:SetPoint("TOP", statusName, "BOTTOM", 0, -3)
+    
+    local statusCharges = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    statusCharges:SetPoint("TOP", statusTime, "BOTTOM", 0, -3)
+
     ---@type PoisonFlowWeaponSlotInstance
     local slot = {
         Frame = frame,
         Icon = icon,
         InventorySlotID = inventorySlotID,
+        EnchantSlot = GetEnchantSlot(hand),
+        StatusTitle = statusTitle,
+        StatusName = statusName,
+        StatusTime = statusTime,
+        StatusCharges = statusCharges,
+        Update = Update,
     }
+
+    function slot:Update()
+        Update(self)
+    end
 
     frame:SetScript(
         "OnEnter",
@@ -104,7 +248,7 @@ function WeaponSlot:Create(parent, hand)
         end
     )
 
-    Update(slot)
+    slot:Update()
 
     return slot
 end

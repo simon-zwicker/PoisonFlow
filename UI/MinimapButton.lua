@@ -1,115 +1,54 @@
 local PoisonFlow = _G.PoisonFlow
 local L11n = PoisonFlow.Localization:Get()
+local Texture = PoisonFlow.Texture
 
 -- =========================================================
 -- Types
 -- =========================================================
-
 ---@class PoisonFlowMinimapButton
----@field Frame Button?
+---@field DataObject table?
 local MinimapButton = {}
+
 PoisonFlow.MinimapButton = MinimapButton
 
 -- =========================================================
 -- Constants
 -- =========================================================
 
-local BUTTON_SIZE = 32
-local MINIMAP_RADIUS = 80
-local ICON_TEXTURE = "Interface\\AddOns\\PoisonFlow\\Assets\\PoisonFlow"
+local ADDON_NAME = "PoisonFlow"
 
 -- =========================================================
--- Position Update
+-- Create Data Object
 -- =========================================================
 
----@param frame Button
----@param angle number
-local function UpdatePosition(frame, angle)
-    local radians = math.rad(angle)
-    local x = math.cos(radians) * MINIMAP_RADIUS
-    local y = math.sin(radians) * MINIMAP_RADIUS
-    frame:ClearAllPoints()
-    frame:SetPoint("CENTER", Minimap, "CENTER", x, y)
-end
+---@return table
+local function CreateDataObject()
+    local LDB = LibStub("LibDataBroker-1.1")
 
----@return number
-local function GetCursorAngle()
-    local minimapX, minimapY = Minimap:GetCenter()
-    if not minimapX or not minimapY then
-        return 225
-    end
-    local cursorX, cursorY = GetCursorPosition()
-    local scale = UIParent:GetEffectiveScale()
-    cursorX = cursorX / scale
-    cursorY = cursorY / scale
-    local angle = math.deg(math.atan2(cursorY - minimapY, cursorX - minimapX))
-    return angle
-end
-
--- =========================================================
--- Create
--- =========================================================
-
-local function CreateMinimapButton()
-    local frame = CreateFrame("Button", "PoisonFlowMinimapButton", Minimap)
-    frame:SetSize(BUTTON_SIZE, BUTTON_SIZE)
-    local db = PoisonFlow.Database:Get()
-    UpdatePosition(frame, db.minimap.angle)
-    frame:SetFrameStrata("MEDIUM")
-    frame:RegisterForClicks("LeftButtonUp")
-    frame:RegisterForDrag("LeftButton")
-
-    local icon = frame:CreateTexture(nil, "BACKGROUND")
-    icon:SetTexture(ICON_TEXTURE)
-    icon:SetAllPoints(frame)
-
-    frame:SetScript(
-        "OnClick",
-        function()
-            PoisonFlow.Settings:Toggle()
-        end
-    )
-
-    frame:SetScript(
-        "OnEnter",
-        function(self)
-            GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-            GameTooltip:SetText(PoisonFlow.Name, 1, 0.82, 0, 1.0)
-            GameTooltip:AddLine(L11n.MINIMAP_TOOLTIP, 1, 1, 1)
-            GameTooltip:Show()
-        end
-    )
-
-    frame:SetScript(
-        "OnLeave",
-        function()
-            GameTooltip:Hide()
-        end
-    )
-
-    frame:SetScript(
-        "OnDragStart",
-        function(self)
-            self:SetScript(
-                "OnUpdate",
-                function()
-                    local angle = GetCursorAngle()
-                    local db = PoisonFlow.Database:Get()
-                    db.minimap.angle = angle
-                    UpdatePosition(self, angle)
+    return LDB:NewDataObject(
+        ADDON_NAME,
+        {
+            type = "launcher",
+            icon = Texture.RogueIcon,
+            iconCoords = {
+                0.49609375,
+                0.7421875,
+                0,
+                0.25
+            },
+            
+            OnClick = function(_, mouseButton)
+                if mouseButton == "LeftButton" then
+                    PoisonFlow.Settings:Toggle()
                 end
-            )
-        end
-    )
+            end,
 
-    frame:SetScript(
-        "OnDragStop",
-        function(self)
-            self:SetScript("OnUpdate", nil)
-        end
+            OnTooltipShow = function(tooltip)
+                tooltip:AddLine(PoisonFlow.Name, 1, 0.82, 0 )
+                tooltip:AddLine(L11n.Minimap.TOOLTIP, 1, 1, 1)
+            end,
+        }
     )
-
-    return frame
 end
 
 -- =========================================================
@@ -117,8 +56,17 @@ end
 -- =========================================================
 
 function MinimapButton:Initialize()
-    if self.Frame then
+    if self.DataObject then
         return
     end
-    self.Frame = CreateMinimapButton()
+
+    local DBIcon = LibStub("LibDBIcon-1.0")
+    local db = PoisonFlow.Database:Get()
+
+    if not db then
+        return
+    end
+
+    self.DataObject = CreateDataObject()
+    DBIcon:Register(ADDON_NAME, self.DataObject, db.minimap)
 end
