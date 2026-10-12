@@ -25,6 +25,8 @@ local ADDON_NAME = ...
 ---@field PoisonFlowButton PoisonFlowButton
 ---@field Warning PoisonFlowWarning
 ---@field ButtonTooltip PoisonFlowButtonTooltip
+---@field Font PoisonFlowFont
+---@field PoisonBagFilter PoisonFlowPoisonBagFilter
 
 local PoisonFlow = {}
 

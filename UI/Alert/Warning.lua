@@ -122,7 +122,7 @@ end
 ---@return FontString
 local function CreateHeadline(frame)
     local headline = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    headline:SetFont(STANDARD_TEXT_FONT, WARNING.Headline.FontSize, "OUTLINE")
+    headline:SetFont(PoisonFlow.Font:Get(), WARNING.Headline.FontSize, "OUTLINE")
     local headlineOffsetX = WARNING.Icon.OffsetX + WARNING.Icon.Size + WARNING.Text.OffsetX
     headline:SetPoint("LEFT", frame, "LEFT", headlineOffsetX, WARNING.Text.Gap + 7)
     local headlineWidth = WARNING.Width - WARNING.Icon.OffsetX - WARNING.Icon.Size - WARNING.Text.OffsetX - WARNING.Padding
@@ -140,7 +140,7 @@ end
 ---@return FontString
 local function CreateDescription(frame, headline)
     local description = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    description:SetFont(STANDARD_TEXT_FONT, WARNING.Description.FontSize)
+    description:SetFont(PoisonFlow.Font:Get(), WARNING.Description.FontSize)
     description:SetPoint("TOPLEFT", headline, "BOTTOMLEFT", 0, -WARNING.Text.Gap)
     local descWidth = WARNING.Width - WARNING.Icon.OffsetX - WARNING.Icon.Size - WARNING.Text.OffsetX - WARNING.Padding
     description:SetWidth(descWidth)
@@ -161,7 +161,7 @@ local function CreateCloseButton(frame)
     button:SetSize(constants.Size, constants.Size)
     button:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -constants.OffsetX, -constants.OffsetY)
     local label = button:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    label:SetFont(STANDARD_TEXT_FONT, constants.FontSize, "OUTLINE")
+    label:SetFont(PoisonFlow.Font:Get(), constants.FontSize, "OUTLINE")
     label:SetPoint("CENTER", button, "CENTER", 0, 0)
     label:SetText("×")
     label:SetTextColor(unpack(constants.Color))
@@ -216,6 +216,28 @@ end
 ---@param warning PoisonFlowWarningInstance
 ---@param content PoisonFlowWarningContent
 function Warning:SetContent(warning, content)
+    -- =========================================================
+    -- Locale Fonts
+    -- =========================================================
+
+    local font = PoisonFlow.Font:Get()
+
+    local headlineSize = content.centered
+        and WARNING.Headline.CenteredFontSize
+        or WARNING.Headline.FontSize
+
+    warning.Headline:SetFont(
+        font,
+        headlineSize,
+        "OUTLINE"
+    )
+
+    warning.Description:SetFont(
+        font,
+        13,
+        ""
+    )
+
     local item = GetInventoryItemTexture("player", content.weaponSlot)
 
     warning.Icon:SetTexture(item)
@@ -253,7 +275,7 @@ function Warning:SetContent(warning, content)
 
         warning.Headline:SetJustifyH("CENTER")
         warning.Headline:SetFont(
-            STANDARD_TEXT_FONT,
+            PoisonFlow.Font:Get(),
             WARNING.Headline.CenteredFontSize,
             "OUTLINE"
         )
@@ -292,7 +314,7 @@ function Warning:SetContent(warning, content)
     warning.Headline:SetJustifyH("LEFT")
 
     warning.Headline:SetFont(
-        STANDARD_TEXT_FONT,
+        PoisonFlow.Font:Get(),
         WARNING.Headline.FontSize,
         "OUTLINE"
     )

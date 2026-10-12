@@ -14,6 +14,7 @@ local L11n = PoisonFlow.Localization:Get()
 ---@field Count FontString
 ---@field Hand string
 ---@field SlotType string
+---@field Update fun(self: PoisonFlowPoisonSlotInstance)
 
 ---@class PoisonFlowPoisonSlot
 local PoisonSlot = {}
@@ -75,6 +76,12 @@ end
 
 ---@param slot PoisonFlowPoisonSlotInstance
 local function Update(slot)
+        -- =========================================================
+    -- Localization
+    -- =========================================================
+
+    slot.Title:SetText(GetSlotTitle(slot.SlotType))
+
     local itemID = GetPoisonData(slot)
     if not itemID then
         slot.Icon:SetTexture(nil)
@@ -157,6 +164,7 @@ local function HandleCursorItem(slot)
     SetPoisonData(slot, itemID)
     Update(slot)
     ClearCursor()
+    PoisonFlow.PoisonBagFilter:Stop()
 
     print("|cff00cc66PoisonFlow:|r", L11n.Settings.VALID_POISON, itemLink)
 end
@@ -239,6 +247,10 @@ function PoisonSlot:Create(parent, hand, slotType)
         SlotType = slotType,
     }
 
+    function slot:Update()
+        Update(self)
+    end
+
     frame:SetScript(
         "OnReceiveDrag",
         function()
@@ -249,11 +261,23 @@ function PoisonSlot:Create(parent, hand, slotType)
         "OnClick",
         function(_, button)
             if button == "LeftButton" then
-                HandleCursorItem(slot)
+                local cursorType = GetCursorInfo()
+
+                if cursorType == "item" then
+                    HandleCursorItem(slot)
+                else
+                    PoisonFlow.PoisonBagFilter:Start(
+                        slot.Hand,
+                        slot.SlotType
+                    )
+                end
+
                 return
             end
 
             if button == "RightButton" then
+                PoisonFlow.PoisonBagFilter:Stop()
+
                 SetPoisonData(slot, nil)
                 Update(slot)
                 HideTooltip()

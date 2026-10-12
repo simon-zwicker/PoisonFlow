@@ -14,6 +14,9 @@ local L11n = PoisonFlow.Localization:Get()
 ---@field StatusName FontString
 ---@field StatusTime FontString
 ---@field StatusCharges FontString
+---@field SectionTitle FontString?
+---@field PrimaryPoison PoisonFlowPoisonSlotInstance?
+---@field FallbackPoison PoisonFlowPoisonSlotInstance?
 ---@field Update fun(self: PoisonFlowWeaponSlotInstance)
 
 ---@class PoisonFlowWeaponSlot
@@ -70,6 +73,12 @@ end
 
 ---@param slot PoisonFlowWeaponSlotInstance
 local function Update(slot)
+        -- =========================================================
+    -- Localization
+    -- =========================================================
+
+    slot.StatusTitle:SetText(L11n.Main.CURRENT_POISON)
+    
     -- =========================================================
     -- Weapon Icon
     -- =========================================================

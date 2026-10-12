@@ -8,6 +8,7 @@ local PoisonFlow = _G.PoisonFlow
 ---@field Frame Slider
 ---@field Value FontString
 ---@field SetEnabled fun(self: PoisonFlowSliderInstance, enabled: boolean)
+---@field SetUnit fun(self: PoisonFlowSliderInstance, unit: string)
 
 ---@class PoisonFlowSlider
 local Slider = {}
@@ -64,10 +65,10 @@ function Slider:Create(parent, value, minValue, maxValue, unit, onChanged)
         Frame = frame,
         Value = valueText,
     }
-
+    local currentUnit = unit
     local function UpdateVisuals(currentValue)
         local rounded = math.floor(currentValue + 0.5)
-        valueText:SetText(string.format("%d %s", rounded, unit))
+        valueText:SetText(string.format("%d %s", rounded, currentUnit))
 
         local range = maxValue - minValue
         local progressValue = 0
@@ -77,6 +78,16 @@ function Slider:Create(parent, value, minValue, maxValue, unit, onChanged)
         end
 
         progress:SetWidth(math.max(1, SLIDER_WIDTH * progressValue))
+    end
+
+    -- =========================================================
+    -- Set Unit
+    -- =========================================================
+
+    function instance:SetUnit(newUnit)
+        currentUnit = newUnit
+
+        UpdateVisuals(frame:GetValue())
     end
 
     frame:SetScript(

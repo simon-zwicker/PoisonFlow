@@ -29,7 +29,9 @@
         "GameTooltip",
         "STANDARD_TEXT_FONT",
         "Settings",
-        "PRIMARY"
+        "PRIMARY",
+        "OpenAllBags",
+        "ContainerFrameCombinedBags"
     ],
     "Lua.diagnostics.disable": [
         "assign-type-mismatch"

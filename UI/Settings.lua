@@ -4,12 +4,27 @@ local L11n = PoisonFlow.Localization:Get()
 -- =========================================================
 -- Types
 -- =========================================================
+---@class PoisonFlowAlertRow : Frame
+---@field CheckBox PoisonFlowCheckBoxInstance
+---@field Slider PoisonFlowSliderInstance
+
+---@class PoisonFlowAlertsSection : Frame
+---@field Title FontString
+---@field TimeRow PoisonFlowAlertRow
+---@field ChargesRow PoisonFlowAlertRow
+---@field StockRow PoisonFlowAlertRow
+
+---@class PoisonFlowSettingsFrame : Frame
+---@field AlertsSection PoisonFlowAlertsSection
+---@field SetBackdrop fun(self: PoisonFlowSettingsFrame, backdrop: table)
+---@field SetBackdropColor fun(self: PoisonFlowSettingsFrame, r: number, g: number, b: number, a?: number)
 
 ---@class PoisonFlowSettings
----@field Frame Frame?
+---@field Frame PoisonFlowSettingsFrame?
 ---@field MainHandWeapon PoisonFlowWeaponSlotInstance?
 ---@field OffHandWeapon PoisonFlowWeaponSlotInstance?
 ---@field Refresh fun(self: PoisonFlowSettings)
+---@field RefreshLocalization fun(self: PoisonFlowSettings)
 local Settings = {
     Frame = nil,
     MainHandWeapon = nil,
@@ -168,6 +183,8 @@ local function CreateWeaponStatus(section, hand, titleText)
         0,
         -3
     )
+
+    weapon.SectionTitle = title
 
     return weapon
 end
@@ -334,7 +351,7 @@ local function CreateWeaponSection(parent, hand, titleText)
     -- Primary Poison
     -- =========================================================
 
-    CreatePoisonConfiguration(
+    local primaryPoison = CreatePoisonConfiguration(
         poisonColumn,
         hand,
         "primary",
@@ -345,12 +362,15 @@ local function CreateWeaponSection(parent, hand, titleText)
     -- Fallback Poison
     -- =========================================================
 
-    CreatePoisonConfiguration(
+    local fallbackPoison = CreatePoisonConfiguration(
         poisonColumn,
         hand,
         "fallback",
         -105
     )
+
+    weapon.PrimaryPoison = primaryPoison
+    weapon.FallbackPoison = fallbackPoison
 
     CreateHorizontalDivider(section)
 
@@ -367,7 +387,7 @@ end
 ---@param minValue number
 ---@param maxValue number
 ---@param unit string
----@return Frame
+---@return PoisonFlowAlertRow
 local function CreateAlertRow(
     parent,
     text,
@@ -376,6 +396,7 @@ local function CreateAlertRow(
     maxValue,
     unit
 )
+    ---@type PoisonFlowAlertRow
     local row = CreateFrame("Frame", nil, parent)
 
     row:SetSize(CONTENT_WIDTH, 46)
@@ -440,6 +461,9 @@ local function CreateAlertRow(
 
     slider:SetEnabled(setting.enabled)
 
+    row.CheckBox = checkBox
+    row.Slider = slider
+
     return row
 end
 
@@ -448,8 +472,10 @@ end
 -- =========================================================
 
 ---@param parent Frame
----@return Frame
+---@return PoisonFlowAlertsSection
 local function CreateAlertsSection(parent)
+
+    ---@type PoisonFlowAlertsSection
     local section = CreateSection(
         parent,
         ALERT_SECTION_HEIGHT
@@ -540,6 +566,12 @@ local function CreateAlertsSection(parent)
         -6
     )
 
+    section.Title = title
+
+    section.TimeRow = timeRow
+    section.ChargesRow = chargesRow
+    section.StockRow = stockRow
+
     return section
 end
 
@@ -548,6 +580,8 @@ end
 -- =========================================================
 
 local function CreateSettingsFrame()
+
+    ---@type PoisonFlowSettingsFrame
     local frame = CreateFrame(
         "Frame",
         "PoisonFlowSettingsFrame",
@@ -716,6 +750,7 @@ local function CreateSettingsFrame()
     -- =========================================================
 
     local alertsSection = CreateAlertsSection(frame)
+    frame.AlertsSection = alertsSection
 
     alertsSection:SetPoint(
         "TOPLEFT",
@@ -759,6 +794,107 @@ function Settings:Refresh()
 
     if self.OffHandWeapon then
         self.OffHandWeapon:Update()
+    end
+end
+
+-- =========================================================
+-- Refresh Localization
+-- =========================================================
+
+function Settings:RefreshLocalization()
+    if not self.Frame then
+        return
+    end
+
+    local L = PoisonFlow.Localization:Get()
+    local section = self.Frame.AlertsSection
+
+    -- =========================================================
+    -- Main Hand
+    -- =========================================================
+
+    local mainHand = self.MainHandWeapon
+
+    if mainHand ~= nil then
+        local sectionTitle = mainHand.SectionTitle
+        local primaryPoison = mainHand.PrimaryPoison
+        local fallbackPoison = mainHand.FallbackPoison
+
+        if sectionTitle ~= nil then
+            sectionTitle:SetText(L.Main.MAIN_HAND)
+        end
+
+        mainHand:Update()
+
+        if primaryPoison ~= nil then
+            primaryPoison:Update()
+        end
+
+        if fallbackPoison ~= nil then
+            fallbackPoison:Update()
+        end
+    end
+
+    -- =========================================================
+    -- Off Hand
+    -- =========================================================
+
+    local offHand = self.OffHandWeapon
+
+    if offHand ~= nil then
+        local sectionTitle = offHand.SectionTitle
+        local primaryPoison = offHand.PrimaryPoison
+        local fallbackPoison = offHand.FallbackPoison
+
+        if sectionTitle ~= nil then
+            sectionTitle:SetText(L.Main.OFF_HAND)
+        end
+
+        offHand:Update()
+
+        if primaryPoison ~= nil then
+            primaryPoison:Update()
+        end
+
+        if fallbackPoison ~= nil then
+            fallbackPoison:Update()
+        end
+    end
+
+    -- =====================================================
+    -- Alerts
+    -- =====================================================
+
+    if section then
+        section.Title:SetText(L.Settings.ALERTS)
+
+        section.TimeRow.CheckBox.Label:SetText(
+            L.Settings.ALERT_TIME
+        )
+
+        section.ChargesRow.CheckBox.Label:SetText(
+            L.Settings.ALERT_CHARGES
+        )
+
+        section.StockRow.CheckBox.Label:SetText(
+            L.Settings.ALERT_POISON
+        )
+
+        -- =====================================================
+        -- Slider Units
+        -- =====================================================
+
+        section.TimeRow.Slider:SetUnit(
+            L.Settings.ALERT_TIME_UNIT
+        )
+
+        section.ChargesRow.Slider:SetUnit(
+            L.Settings.ALERT_CHARGES_UNIT
+        )
+
+        section.StockRow.Slider:SetUnit(
+            L.Settings.ALERT_POISON_UNIT
+        )
     end
 end
 
