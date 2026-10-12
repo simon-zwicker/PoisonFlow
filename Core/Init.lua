@@ -58,3 +58,47 @@ eventFrame:SetScript(
         self:UnregisterEvent("ADDON_LOADED")
     end
 )
+
+-- =========================================================
+-- Testing AREA
+-- =========================================================
+
+local LibLayout = _G.LibLayout
+
+local window = CreateFrame("Frame", nil, UIParent)
+window:SetSize(500, 350)
+window:SetPoint("CENTER")
+
+local background = window:CreateTexture(nil, "BACKGROUND")
+background:SetColorTexture(0.12, 0.10, 0.08, 0.95)
+
+LibLayout:Make(background, function(make)
+    make:Edges(window)
+end)
+
+local content = CreateFrame("Frame", nil, window)
+
+local contentBackground = content:CreateTexture(nil, "BACKGROUND")
+contentBackground:SetAllPoints()
+contentBackground:SetColorTexture(0.20, 0.17, 0.12, 1)
+
+LibLayout:Make(content, function(make)
+    make:Edges(window):Inset(16)
+end)
+
+local button = CreateFrame("Button", nil, content)
+button:SetNormalFontObject(GameFontNormal)
+
+button:SetText("Test Button")
+
+local buttonBackground = button:CreateTexture(nil, "BACKGROUND")
+buttonBackground:SetAllPoints()
+buttonBackground:SetColorTexture(0.35, 0.25, 0.12, 1)
+
+LibLayout:Make(button, function(make)
+    make:Top(content):Inset(16)
+    make:Trailing(content):Inset(16)
+    make:Size(140, 32)
+end)
+
+window:Show()

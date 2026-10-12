@@ -6,12 +6,15 @@
 ## IconTexture: Interface\AddOns\PoisonFlow\Assets\PoisonFlow
 ## SavedVariablesPerCharacter: PoisonFlowDB
 
-Core\Init.lua
-
 Libs\LibStub\LibStub.lua
 Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
 Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
 Libs\LibDBIcon-1.0\LibDBIcon-1.0.lua
+Libs\LibLayout\Init.lua
+Libs\LibLayout\Constraints.lua
+Libs\LibLayout\Layout.lua
+
+Core\Init.lua
 
 Localization\Core.lua
 UI\Theme\Font.lua
